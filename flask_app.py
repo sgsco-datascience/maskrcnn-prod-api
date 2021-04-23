@@ -79,12 +79,12 @@ def normalize_images(WIDTH, HEIGHT, boxes):
     return rbox
 
 
-def predict_BATCH(image_mrcnn_batch, thumbnail_maxsize=1200):
+def predict_BATCH(image_mrcnn_batch):
     print ("==================================================================================================================================")
     
-    
+    '''
     for i in image_mrcnn_batch:
-        i.thumbnail((thumbnail_maxsize, thumbnail_maxsize))
+        i.thumbnail((thumbnail_maxsize, thumbnail_maxsize))'''
     
     x = [np.asarray(i) for i in image_mrcnn_batch]
     
@@ -116,7 +116,7 @@ def scanner():
     #print(type(request.data['image']))
     img = Image.open(io.BytesIO(request.data)) #PIL Image input to barcode scanner
     image_mrcnn = [img] #passing one image
-    normalized_output = predict_BATCH(image_mrcnn, thumbnail_maxsize=1200)
+    normalized_output = predict_BATCH(image_mrcnn)
 
     response = {}
     
