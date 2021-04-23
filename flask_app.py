@@ -61,7 +61,7 @@ cfg = PredictionConfig()
 model = MaskRCNN(mode='inference', model_dir= MODEL_DIR, config=cfg)
 # load model weights
 #model.load_weights(MODEL_DIR + 'mask_rcnn_barcode_scanner.h5', by_name=True) # Prod
-model.load_weights('./weights/barcode_maskrcnn.h5', by_name=True) # Test Dev
+model.load_weights('barcode_maskrcnn.h5', by_name=True) # Test Dev
 
 
 graph = tf.get_default_graph()
