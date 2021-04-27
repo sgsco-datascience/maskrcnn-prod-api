@@ -1,6 +1,3 @@
-
-
-
 import time
 import base64
 
@@ -46,7 +43,7 @@ class PredictionConfig(Config):
     # simplify GPU config
 #    GPU_COUNT = 0
     GPU_COUNT = 1
-    IMAGES_PER_GPU = 1
+    IMAGES_PER_GPU = 16
 #     IMAGE_MIN_DIM = 256
 #     IMAGE_MAX_DIM = 512
 #     DETECTION_MIN_CONFIDENCE= 0.9
@@ -55,6 +52,12 @@ class PredictionConfig(Config):
 #     DETECTION_NMS_THRESHOLD= 0.0
 
 ############################################################################
+'''
+device_name = tf.test.gpu_device_name()
+if device_name != '/device:GPU:0':
+  raise SystemError('GPU device not found')
+print('Found GPU at: {}'.format(device_name))'''
+
 
 cfg = PredictionConfig()
 # define the model
@@ -79,8 +82,9 @@ def normalize_images(WIDTH, HEIGHT, boxes):
     return rbox
 
 
-def predict_BATCH(image_mrcnn_batch):
-    print ("==================================================================================================================================")
+def predict_BATCH(image_mrcnn_batch, thumbnail_maxsize=1200):
+    #print ("==================================================================================================================================")
+    
     
     '''
     for i in image_mrcnn_batch:
@@ -90,10 +94,10 @@ def predict_BATCH(image_mrcnn_batch):
     
     normalized_output = []
     #for image_mrcnn_ in image_mrcnn:
-    
+    start_mrcnn = time.time()
     with graph.as_default():
-        
         yhat_batch = model.detect(x)
+    print("Time taken to process batch inference of 16 images: ", time.time()-start_mrcnn)
     for idx, yhat in enumerate(yhat_batch):
         index = np.argwhere(yhat['scores'] > 0.60).shape[0]
         classes_predicted =yhat['class_ids'][:index,]
@@ -105,6 +109,7 @@ def predict_BATCH(image_mrcnn_batch):
         WIDTH = image_mrcnn_batch[idx].size[0]
         HEIGHT = image_mrcnn_batch[idx].size[1]
         normalized_output.append(normalize_images(WIDTH, HEIGHT, bbox_predicted))
+    
     return normalized_output     
 
 
@@ -112,17 +117,18 @@ def predict_BATCH(image_mrcnn_batch):
 @app.route('/mask_rcnn/',methods=['GET','POST'])
 def scanner():
     
-    #try:
-    #print(type(request.data['image']))
-    img = Image.open(io.BytesIO(request.data)) #PIL Image input to barcode scanner
-    image_mrcnn = [img] #passing one image
-    normalized_output = predict_BATCH(image_mrcnn)
-
-    response = {}
     
+    image_mrcnn_dir = request.files.to_dict() #read the multiple file request
+    image_mrcnn = [Image.open(io.BytesIO(image_mrcnn_dir[filename].read())) for filename in image_mrcnn_dir]
+    
+    print(len(image_mrcnn))
+    start_time = time.time()
+    normalized_output = predict_BATCH(image_mrcnn)
+    response = {}
     response['normalized_output'] = normalized_output
+    print("Response created in:", time.time()-start_time)
     return response
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=9090)
+    app.run(host="0.0.0.0", port=9090, debug = True)
     
