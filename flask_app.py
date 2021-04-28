@@ -23,7 +23,7 @@ from flask import Flask, render_template, request, jsonify
 import requests
 import io
 
-app = Flask(__name__)
+application = Flask(__name__)
 
 # Lets annotate to pascal format
 Image.MAX_IMAGE_PIXELS = None
@@ -113,9 +113,8 @@ def predict_BATCH(image_mrcnn_batch, thumbnail_maxsize=1200):
     return normalized_output     
 
 
-### NEEDED ###
-@app.route('/mask_rcnn/',methods=['GET','POST'])
-def scanner():
+@application.route('/predict/',methods=['GET','POST'])
+def predict():
     
     
     image_mrcnn_dir = request.files.to_dict() #read the multiple file request
@@ -130,5 +129,5 @@ def scanner():
     return response
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=9090, debug = False)
+    application.run(host='0.0.0.0', port=5000, debug = False)
     
