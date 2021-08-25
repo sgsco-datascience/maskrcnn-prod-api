@@ -18,7 +18,7 @@ RUN conda install -c anaconda -y \
     keras=2.1.6\
     numpy=1.16.0
 
-RUN git clone https://github.com/sgsco-labs/Mask_RCNN
+RUN git clone https://WeinChien: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@github.com/sgsco-labs/Mask_RCNN
 WORKDIR "/Mask_RCNN"
 RUN pip install -r requirements.txt
 RUN python setup.py build
@@ -28,7 +28,8 @@ WORKDIR "../"
 #WORKDIR "/weights"
 #RUN wget https://www.dropbox.com/s/wqx77t2q2r8uyoo/barcode_maskrcnn.h5?dl=1
 
-RUN git clone https://github.com/sgsco-labs/maskrcnn
+#RUN git clone https://github.com/sgsco-labs/maskrcnn
+RUN git clone https://WeinChien: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@github.com/sgsco-labs/maskrcnn.git
 WORKDIR "/maskrcnn"
 RUN wget https://www.dropbox.com/s/wqx77t2q2r8uyoo/barcode_maskrcnn.h5
 RUN pip install -r requirements.txt

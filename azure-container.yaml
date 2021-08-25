@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: barcode-mrcnn-app-gpu
+  name: mrcnn-app-gpu
 spec:
   selector:
     matchLabels:
-      app: barcode-mrcnn-app-gpu
+      app: mrcnn-app-gpu
   replicas:  2
   template:
     metadata:
       labels:
-        app: barcode-mrcnn-app-gpu
+        app: mrcnn-app-gpu
     spec:
       containers:
-      - name: barcode-mrcnn-app-gpu-container
-        image: sgscomlcontainer.azurecr.io/barcode_mrcnn_app_gpu:v20210825a
+      - name: mrcnn-app-gpu-container
+        image: sgscomlcontainer.azurecr.io/mrcnn_app_gpu:v20210825a
         ports:
         - containerPort: 9090
         resources:
@@ -29,10 +29,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: barcode-app-service
+  name: maskrcnn-app-service
 spec:
   type: LoadBalancer
   selector:
-    app: barcode-mrcnn-app-gpu
+    app: mrcnn-app-gpu
   ports:
   - port: 9090

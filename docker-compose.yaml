@@ -1,8 +1,8 @@
 version: "3.0"
 
 services:
-  barcode-app-service:
-    image: barcode_mrcnn_app_gpu
+  maskrcnn-app-service:
+    image: mrcnn_app_gpu
     build:
       context: ./
       dockerfile: Dockerfile
