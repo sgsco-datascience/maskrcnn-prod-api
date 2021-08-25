@@ -27,7 +27,6 @@ WORKDIR "../"
 
 #WORKDIR "/weights"
 #RUN wget https://www.dropbox.com/s/wqx77t2q2r8uyoo/barcode_maskrcnn.h5?dl=1
-
 #RUN git clone https://github.com/sgsco-labs/maskrcnn
 RUN git clone https://WeinChien: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@github.com/sgsco-labs/maskrcnn.git
 WORKDIR "/maskrcnn"
