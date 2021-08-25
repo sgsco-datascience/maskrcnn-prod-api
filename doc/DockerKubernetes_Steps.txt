@@ -1,0 +1,41 @@
+[https://docs.microsoft.com/en-us/azure/aks/tutorial-kubernetes-prepare-acr]
+[https://docs.microsoft.com/en-us/azure/aks/gpu-cluster]
+[https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/]
+
+the four local/flask/image/pod stages.
+
+cd Documents/GitHub
+cd maskrcnn
+
+
+docker system df
+docker system prune
+
+docker-compose build --no-cache
+
+docker run -p 9090:9090 barcode_mrcnn_app_gpu
+
+az login
+az acr login --name sgscomlcontainer
+
+
+docker tag barcode_mrcnn_app_gpu sgscomlcontainer.azurecr.io/barcode_mrcnn_app_gpu:v20210825a
+docker push sgscomlcontainer.azurecr.io/barcode_mrcnn_app_gpu:v20210825a
+[upload happens]
+
+az aks get-credentials -g MLRetrainingStorageAccount -n datawarehousesupportedapps 
+az acr repository list --name sgscomlcontainer --output table
+az acr repository show-tags --name sgscomlcontainer --repository barcode_mrcnn_app_gpu --output table
+
+
+kubectl get nodes 
+kubectl get pods
+
+[
+Goto Microsoft Azure Portal. Dashboard -> AKSCluster -> Services and ingresses.
+Do not delete the application here because External IP will change.
+Instead, go to Dashboard -> AKSCluster -> Workloads, and delete the pods inside there (will not change External IP).
+]
+
+
+kubectl apply -f azure-container.yaml 
