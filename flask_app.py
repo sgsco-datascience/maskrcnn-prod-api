@@ -43,7 +43,7 @@ class PredictionConfig(Config):
     # simplify GPU config
 #    GPU_COUNT = 0
     GPU_COUNT = 1
-    IMAGES_PER_GPU = 16
+    IMAGES_PER_GPU = 1
 #     IMAGE_MIN_DIM = 256
 #     IMAGE_MAX_DIM = 512
 #     DETECTION_MIN_CONFIDENCE= 0.9
@@ -54,8 +54,9 @@ class PredictionConfig(Config):
 ############################################################################
 
 device_name = tf.test.gpu_device_name()
-if device_name != '/device:GPU:0':
-  raise SystemError('GPU device not found')
+print (device_name)
+#if device_name != '/device:GPU:0':
+#  raise SystemError('GPU device not found')
 print('Found GPU at: {}'.format(device_name))
 
 
@@ -95,20 +96,20 @@ def predict_BATCH(image_mrcnn_batch, thumbnail_maxsize=1200):
     normalized_output = []
     #for image_mrcnn_ in image_mrcnn:
     start_mrcnn = time.time()
-    with graph.as_default():
-        yhat_batch = model.detect(x)
-    print("Time taken to process batch inference of 16 images: ", time.time()-start_mrcnn)
-    for idx, yhat in enumerate(yhat_batch):
-        index = np.argwhere(yhat['scores'] > 0.60).shape[0]
-        classes_predicted =yhat['class_ids'][:index,]
-        classes_predicted =classes_predicted[classes_predicted == 1]
-        scores = yhat['scores'][:index,][classes_predicted == 1]
-        bbox_predicted = yhat['rois'][:index,][classes_predicted == 1]
-        masks_predicted = yhat['masks'][:,:,:index,][:,:,classes_predicted == 1]
+    for i in range(len(x)):
+        with graph.as_default():
+            yhat_batch = model.detect([x[i]])
+        for idx, yhat in enumerate(yhat_batch):
+            index = np.argwhere(yhat['scores'] > 0.92).shape[0]
+            classes_predicted =yhat['class_ids'][:index,]
+            classes_predicted =classes_predicted[classes_predicted == 1]
+            scores = yhat['scores'][:index,][classes_predicted == 1]
+            bbox_predicted = yhat['rois'][:index,][classes_predicted == 1]
+            masks_predicted = yhat['masks'][:,:,:index,][:,:,classes_predicted == 1]
         
-        WIDTH = image_mrcnn_batch[idx].size[0]
-        HEIGHT = image_mrcnn_batch[idx].size[1]
-        normalized_output.append(normalize_images(WIDTH, HEIGHT, bbox_predicted))
+            WIDTH = image_mrcnn_batch[idx].size[0]
+            HEIGHT = image_mrcnn_batch[idx].size[1]
+            normalized_output.append(normalize_images(WIDTH, HEIGHT, bbox_predicted))
     
     return normalized_output     
 
