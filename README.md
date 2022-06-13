@@ -1,4 +1,4 @@
-# maskrcnn production in GCP. Working code
+# maskrcnn production in AKS barcode cluster. Working code
 
  ```
 from PIL import Image
